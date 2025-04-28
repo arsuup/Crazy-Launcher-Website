@@ -4,8 +4,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crazy Launcher</title>
+    <link rel="stylesheet" href="CSS/home.css">
+    <link rel="shortcut icon" href="IMGs/logo.png" type="image/x-icon">
 </head>
 <body>
-    télécharger : <button>Page de téléchargement</button>
+    <div class="container1">
+        <header>
+            <div class="headerdiv" id="headerdiv1">
+                <img src="IMGs/logo.png" style="width: 60px;"  onclick="" style="cursor: pointer;">
+                <h2 onclick="" style="cursor: pointer;">Crazy Launcher</h2>
+            </div>
+            <div class="headerdiv" id="headerdiv2">
+                <a class="headerbutton2" id="hb1" href="index.html">
+                    <img class="headerbuttonimg" src="IMGs/home.svg">
+                    <p>Accueil</p>
+                </a>
+                <a class="headerbutton1" id="hb1">
+                    <img class="headerbuttonimg" src="IMGs/server.svg">
+                    <p>Serveurs</p>
+                </a>
+                <a class="headerbutton1" id="hb2" href="download.html">
+                    <img class="headerbuttonimg" src="IMGs/download.svg">
+                    <p>Installer le launcheur</p>
+                </a>
+            </div>
+            <div class="headerdiv" id="headerdiv3">
+                
+            </div>
+        </header>
+        <div class="contentcontainer1">
+            
+        </div>
+    </div>
+        
+
+        <script>
+            async function getAssets() {
+            const response = await fetch('https://api.github.com/repos/arsuup/Crazy-Launcher/releases/latest');
+            
+            if (!response.ok) {
+                console.error('Erreur lors de la récupération:', response.statusText);
+                return;
+            }
+            
+            const data = await response.json();
+            const assets = data.assets;
+            
+            const files = {
+                windows: null,
+                linux: null,
+                mac_dmg: null,
+                mac_zip: null
+            };
+            
+            assets.forEach(asset => {
+                const name = asset.name.toLowerCase();
+                if (name.endsWith('.exe') && !files.windows) {
+                    files.windows = asset.browser_download_url;
+                } else if (name.endsWith('.appimage') && !files.linux) {
+                    files.linux = asset.browser_download_url;
+                } else if (name.endsWith('.dmg') && !files.mac_dmg) {
+                    files.mac_dmg = asset.browser_download_url;
+                } else if (name.endsWith('.zip') && !files.mac_zip) {
+                    files.mac_zip = asset.browser_download_url;
+                }
+            });
+            
+            // Stocker les liens de téléchargement dans le DOM
+            if (files.windows) document.getElementById("c21").href = files.windows;
+            if (files.mac_zip) document.getElementById("c22").href = files.mac_zip;
+            if (files.mac_dmg) document.getElementById("c23").href = files.mac_dmg;
+            if (files.linux) document.getElementById("c24").href = files.linux;
+
+            return files; // Renvoie les fichiers
+        }
+
+        let os = 1;
+        const platform = navigator.platform.toLowerCase();
+
+        if (platform.includes('mac')) {
+            os = 2;
+        } else if (platform.includes('linux')) {
+            os = 3;
+        } else {
+            os = 1;
+        }
+
+        console.log('OS détecté :', os);
+
+        let texttitle = "Télécharger le launcheur pour ";
+
+        switch (os) {
+            case 1: // Windows
+                document.getElementById("title1").textContent = texttitle + "Windows";
+                document.getElementById("downloadbutton").src = "../IMGs/logowindows.svg";
+                break;
+            case 2: // Mac
+                document.getElementById("title1").textContent = texttitle + "Mac";
+                document.getElementById("downloadbutton").src = "../IMGs/logomacos.svg";
+                break;
+            case 3: // Linux
+                document.getElementById("title1").textContent = texttitle + "Linux";
+                document.getElementById("downloadbutton").src = "../IMGs/logolinux.svg";
+                break;
+        }
+
+        async function DownloadButton() {
+            console.log("Téléchargement...");
+
+            // Appeler la fonction getAssets pour récupérer les fichiers
+            const files = await getAssets();
+            scrollToDiv();
+
+            switch (os) {
+                case 1: // Windows
+                    if (files.windows) {
+                        window.location.href = files.windows;
+                    } else {
+                        console.error("Le fichier Windows n'est pas disponible.");
+                    }
+                    break;
+                case 2: // Mac
+                    if (files.mac_zip) {
+                        window.location.href = files.mac_zip;
+                    } else if (files.mac_dmg) {
+                        window.location.href = files.mac_dmg;
+                    } else {
+                        console.error("Les fichiers Mac ne sont pas disponibles.");
+                    }
+                    break;
+                case 3: // Linux
+                    if (files.linux) {
+                        window.location.href = files.linux;
+                    } else {
+                        console.error("Le fichier Linux n'est pas disponible.");
+                    }
+                    break;
+                default:
+                    console.error("OS non détecté ou non supporté.");
+                    break;
+            }
+        }
+
+            //----------------------------
+
+            function scrollToDiv() {
+                document.getElementById("c2").scrollIntoView({ behavior: "smooth" });
+            }
+        </script>
 </body>
 </html>
